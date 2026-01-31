@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>IRAG – Application</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body{font-family:Arial;background:#111;color:#fff;padding:30px}
+.card{max-width:900px;margin:auto;background:#1b1b1b;padding:30px;border-radius:12px}
+input,textarea{width:100%;padding:10px;margin:8px 0;border-radius:6px;border:none}
+button{padding:12px 20px;background:#1e90ff;color:#fff;border:none;border-radius:8px;margin:5px}
+</style>
+</head>
+<body>
+
+<div class="card">
+<h2>IRAG Application Form</h2>
+
+<form onsubmit="submitForm(event)">
+<input id="name" placeholder="Full Name" required>
+<input id="phone" placeholder="Phone Number" required>
+<input id="country" placeholder="Country" required>
+<input id="city" placeholder="City / Town" required>
+<input id="disaster" placeholder="Disaster Type" required>
+<input id="disability" placeholder="Disability / Special Needs">
+<textarea id="details" placeholder="Describe your situation" required></textarea>
+
+<button type="button" onclick="location.href='page2.html'">⬅ Back</button>
+<button type="submit">Submit Application</button>
+</form>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
+<script>
+/* 🔥 FIREBASE (optional but recommended) */
+const firebaseConfig = {
+  apiKey: "PASTE_HERE",
+  authDomain: "PASTE_HERE",
+  projectId: "PASTE_HERE",
+  appId: "PASTE_HERE"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+/* ✉️ EMAILJS */
+emailjs.init("YOUR_PUBLIC_KEY");
+
+function submitForm(e){
+  e.preventDefault();
+
+  const data = {
+    name: name.value,
+    phone: phone.value,
+    country: country.value,
+    city: city.value,
+    disaster: disaster.value,
+    disability: disability.value,
+    details: details.value,
+    to_email: "Impreliefassistancegrant@proton.me",
+    submittedAt: new Date().toISOString()
+  };
+
+  db.collection("applications").add(data).then(ref => {
+    emailjs.send(
+      "YOUR_SERVICE_ID",
+      "YOUR_TEMPLATE_ID",
+      { ...data, refId: ref.id }
+    ).finally(() => {
+      window.location.href = "page4.html";
+    });
+  }).catch(() => {
+    window.location.href = "page4.html";
+  });
+}
+</script>
+
+</body>
+</html>
